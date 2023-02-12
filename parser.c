@@ -1,8 +1,8 @@
 #include <sndfile.h>
 #include <stdint.h>
 #include <stdlib.h>
-#define PATHIN "output2.wav" 
-#define PATHOUT "2.wav"
+#include <string.h>
+#define PYCOMMAND "python3 graf.py<command.txt"
 
 void sfInfoPrint(SF_INFO* sfinfo){
 
@@ -20,26 +20,33 @@ void sfInfoPrint(SF_INFO* sfinfo){
 
 }
 
-void main(){
-    SF_INFO sfinfoIN;
-    SNDFILE* fileIN = sf_open(PATHIN, SFM_READ, &sfinfoIN);
-    FILE* fp = fopen("data.txt", "w");
-    //SF_INFO sfinfoOUT = {sfinfoIN.frames, sfinfoIN.samplerate, sfinfoIN.channels, sfinfoIN.format, sfinfoIN.sections, sfinfoIN.seekable};
-    //SNDFILE* fileOUT = sf_open(PATHOUT, SFM_WRITE, &sfinfoOUT);
+void main(int argc, char* argv[]){
 
+    if (argc!=3){
+        printf("Error: wrong filename description");
+        exit(1);
+    }
+
+    SF_INFO sfinfoIN;
+    SNDFILE* fileIN = sf_open(argv[1], SFM_READ, &sfinfoIN);
+    FILE* fp = fopen("data.txt", "w");
+
+    sfInfoPrint(&sfinfoIN);
     double buffer[1024];
     int count = 0;
     
-    //printf("%d\n", sf_read_double(fileIN, &buffer, 1));
     for(int i = 0;(count = sf_read_double(fileIN, buffer, 1024));){
         for (int j = 0; j < count; j++){
             i++;
             fprintf(fp, "%d %lf\n",i, buffer[j]);
         }
-        //printf("%d, %lf\n",reader,  buffer[0]);
     }
 
     fclose(fp);
     sf_close(fileIN);
-    //sf_close(fileOUT);
+
+    FILE* fc = fopen("command.txt", "w");
+    fprintf(fc,"%s", argv[2]);
+    fclose(fc);
+    system(PYCOMMAND);
 }
