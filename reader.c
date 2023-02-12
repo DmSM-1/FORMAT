@@ -21,4 +21,5 @@ void main(){
     SF_INFO sfinfo;
     SNDFILE* file = sf_open(PATH, SFM_READ, &sfinfo);
     sfInfoPrint(&sfinfo);
+    sf_close(file);
 }
