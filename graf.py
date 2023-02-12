@@ -10,5 +10,5 @@ b = [i[1] for i in arr]
 
 plt.plot(a[::2],b[::2])
 plt.plot(a[1::2],b[1::2])
-plt.savefig(input())
+plt.savefig(input(), dpi=400)
 #plt.show()
